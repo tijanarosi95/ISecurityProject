@@ -2,7 +2,13 @@ package app;
 
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Signature;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -14,6 +20,7 @@ import org.apache.xml.security.utils.JavaUtils;
 
 import com.google.api.services.gmail.Gmail;
 
+import model.keystore.KeyStoreReader;
 import util.Base64;
 import util.GzipUtil;
 import util.IVHelper;
@@ -71,6 +78,21 @@ public class WriteMailClient extends MailClient {
 			String ciphersubjectStr = Base64.encodeToString(ciphersubject);
 			System.out.println("Kriptovan subject: " + ciphersubjectStr);
 			
+			KeyStoreReader keyStoreReader = new KeyStoreReader();
+			
+			KeyStore keyStore = keyStoreReader.readKeyStore("./data/UserA.jks", "12345".toCharArray());
+			
+			PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStore, "usera", "12345".toCharArray());
+			
+			Signature signature = Signature.getInstance("SHA256withRSA");
+			signature.initSign(privateKey);
+			
+			byte[] messageBytes = objectToByteArray(MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr));
+			signature.update(messageBytes);
+			
+			byte[] digitalSign = signature.sign();
+			
+			
 			
 			//snimaju se bajtovi kljuca i IV.
 			JavaUtils.writeBytesToFilename(KEY_FILE, secretKey.getEncoded());
@@ -83,5 +105,29 @@ public class WriteMailClient extends MailClient {
         }catch (Exception e) {
         	e.printStackTrace();
 		}
+	}
+	
+	private static byte[] objectToByteArray(MimeMessage message) {
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream out = null;
+		try {
+		  out = new ObjectOutputStream(bos);   
+		  out.writeObject(message);
+		  out.flush();
+		  byte[] messageBytes = bos.toByteArray();
+
+		 return messageBytes;
+		 
+		}catch(Exception ex) {ex.printStackTrace();
+		
+		} finally {
+		  try {
+		    bos.close();
+		  } catch (IOException ex) {
+			  ex.printStackTrace();
+		  }
+		}
+		return null;	
 	}
 }
