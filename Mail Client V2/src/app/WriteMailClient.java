@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
+import java.security.cert.Certificate;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -21,6 +23,7 @@ import org.apache.xml.security.utils.JavaUtils;
 import com.google.api.services.gmail.Gmail;
 
 import model.keystore.KeyStoreReader;
+import model.mailclient.MailBody;
 import util.Base64;
 import util.GzipUtil;
 import util.IVHelper;
@@ -55,26 +58,26 @@ public class WriteMailClient extends MailClient {
             String compressedBody = Base64.encodeToString(GzipUtil.compress(body));
             
             //Key generation
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES"); 
+            KeyGenerator keyGen = KeyGenerator.getInstance("DESede"); 
 			SecretKey secretKey = keyGen.generateKey();
-			Cipher aesCipherEnc = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			Cipher desCipherEnc = Cipher.getInstance("DESede/ECB/PKCS5Padding");
 			
 			//inicijalizacija za sifrovanje 
 			IvParameterSpec ivParameterSpec1 = IVHelper.createIV();
-			aesCipherEnc.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec1);
+			desCipherEnc.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec1);
 			
 			
 			//sifrovanje
-			byte[] ciphertext = aesCipherEnc.doFinal(compressedBody.getBytes());
+			byte[] ciphertext = desCipherEnc.doFinal(compressedBody.getBytes());
 			String ciphertextStr = Base64.encodeToString(ciphertext);
 			System.out.println("Kriptovan tekst: " + ciphertextStr);
 			
 			
 			//inicijalizacija za sifrovanje 
 			IvParameterSpec ivParameterSpec2 = IVHelper.createIV();
-			aesCipherEnc.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec2);
+			desCipherEnc.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec2);
 			
-			byte[] ciphersubject = aesCipherEnc.doFinal(compressedSubject.getBytes());
+			byte[] ciphersubject = desCipherEnc.doFinal(compressedSubject.getBytes());
 			String ciphersubjectStr = Base64.encodeToString(ciphersubject);
 			System.out.println("Kriptovan subject: " + ciphersubjectStr);
 			
@@ -92,14 +95,37 @@ public class WriteMailClient extends MailClient {
 			
 			byte[] digitalSign = signature.sign();
 			
+			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStore, "userb");
+			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(userBCer);
 			
+			/*
+			 * To instantiate a Cipher object, I must call static method getInstance
+			 * passing the name of requested transformation
+			 * In this case we instantiate the Cipher object as RSA cipher with
+			 * ECB mode of operation and PKCS1Padding scheme*/
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			
+			cipher.init(Cipher.ENCRYPT_MODE, publicKeyUserB);
+			
+			/*
+			 * after initializing the cipher object, call doFinal method to
+			 * perform encryption operation who return a byte array 
+			 * */
+			byte[] encriptedKey = cipher.doFinal(secretKey.getEncoded());
+			
+			/*
+			 * Encripted secret key transmit through MailBody constructor with Iv */
+			MailBody mailBody = new MailBody(ciphertext, ivParameterSpec1.getIV(), ivParameterSpec2.getIV(), encriptedKey, digitalSign);
+			
+			
+			String mailToCSV = mailBody.toCSV();
 			
 			//snimaju se bajtovi kljuca i IV.
 			JavaUtils.writeBytesToFilename(KEY_FILE, secretKey.getEncoded());
 			JavaUtils.writeBytesToFilename(IV1_FILE, ivParameterSpec1.getIV());
 			JavaUtils.writeBytesToFilename(IV2_FILE, ivParameterSpec2.getIV());
 			
-        	MimeMessage mimeMessage = MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr);
+        	MimeMessage mimeMessage = MailHelper.createMimeMessage(reciever, ciphersubjectStr, mailToCSV);
         	MailWritter.sendMessage(service, "me", mimeMessage);
         	
         }catch (Exception e) {
