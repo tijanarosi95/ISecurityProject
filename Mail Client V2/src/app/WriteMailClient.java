@@ -60,7 +60,7 @@ public class WriteMailClient extends MailClient {
             //Key generation
             KeyGenerator keyGen = KeyGenerator.getInstance("DESede"); 
 			SecretKey secretKey = keyGen.generateKey();
-			Cipher desCipherEnc = Cipher.getInstance("DESede/ECB/PKCS5Padding");
+			Cipher desCipherEnc = Cipher.getInstance("DESede/CBC/PKCS5Padding");
 			
 			//inicijalizacija za sifrovanje 
 			IvParameterSpec ivParameterSpec1 = IVHelper.createIV();
@@ -83,19 +83,22 @@ public class WriteMailClient extends MailClient {
 			
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
 			
-			KeyStore keyStore = keyStoreReader.readKeyStore("./data/UserA.jks", "12345".toCharArray());
+			KeyStore keyStoreA = keyStoreReader.readKeyStore("./data/UserA.jks", "12345".toCharArray());
+			KeyStore keyStoreB = keyStoreReader.readKeyStore("./data/UserB.jks", "54321".toCharArray());
 			
-			PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStore, "usera", "12345".toCharArray());
+			
+			PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStoreA, "usera", "12345".toCharArray());
 			
 			Signature signature = Signature.getInstance("SHA256withRSA");
 			signature.initSign(privateKey);
 			
+			//MimeMessage does not implement Serializable interface FIX THAT--->Transform message to XML
 			byte[] messageBytes = objectToByteArray(MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr));
 			signature.update(messageBytes);
 			
 			byte[] digitalSign = signature.sign();
 			
-			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStore, "userb");
+			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStoreB, "userb");
 			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(userBCer);
 			
 			/*
