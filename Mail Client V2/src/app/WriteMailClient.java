@@ -25,6 +25,7 @@ import com.google.api.services.gmail.Gmail;
 import model.keystore.KeyStoreReader;
 import model.mailclient.MailBody;
 import util.Base64;
+import util.DataUtil;
 import util.GzipUtil;
 import util.IVHelper;
 import support.MailHelper;
@@ -89,14 +90,16 @@ public class WriteMailClient extends MailClient {
 			
 			PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStoreA, "usera", "12345".toCharArray());
 			
-			Signature signature = Signature.getInstance("SHA256withRSA");
-			signature.initSign(privateKey);
+			
+			DataUtil.generateXML(reciever, subject, body);
+			//Signature signature = Signature.getInstance("SHA256withRSA");
+			//signature.initSign(privateKey);
 			
 			//MimeMessage does not implement Serializable interface FIX THAT--->Transform message to XML
-			byte[] messageBytes = objectToByteArray(MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr));
-			signature.update(messageBytes);
+			//byte[] messageBytes = objectToByteArray(MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr));
+			//signature.update(messageBytes);
 			
-			byte[] digitalSign = signature.sign();
+			//byte[] digitalSign = signature.sign();
 			
 			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStoreB, "userb");
 			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(userBCer);
@@ -118,7 +121,7 @@ public class WriteMailClient extends MailClient {
 			
 			/*
 			 * Encripted secret key transmit through MailBody constructor with Iv */
-			MailBody mailBody = new MailBody(ciphertext, ivParameterSpec1.getIV(), ivParameterSpec2.getIV(), encriptedKey, digitalSign);
+			MailBody mailBody = new MailBody(ciphertext, ivParameterSpec1.getIV(), ivParameterSpec2.getIV(), encriptedKey);
 			
 			
 			String mailToCSV = mailBody.toCSV();
