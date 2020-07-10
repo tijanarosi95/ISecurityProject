@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><root><message><recipient>rosictijana95@gmail.com</recipient><subject>Tija i Stefi</subject><body>Test Last One</body></message><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><root><message><recipient>rosictijana95@gmail.com</recipient><subject>Testtt</subject><body>Last test</body></message><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 <ds:SignedInfo>
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
@@ -8,15 +8,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#WithComments"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>WIqxlQOfwu5zekH5fOREWuBiDec=</ds:DigestValue>
+<ds:DigestValue>2Bf+rNjl13aCZb5iybfT4Ofw6dE=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
 <ds:SignatureValue>
-alYSmKjml1XpbcNQKESbfr7pUksfIxAD0CnUirSyP0hI5WzRCh3QGKzxwSDzF/XRt+5VoJCWOZY3
-LTMFr+hwxmKxecJ7irxW8usUBsObr3TwpuflhRhRtZQYQkwrC98GMpn6+eddK20Rd7Bd5kkhbzwh
-xndlZbMjqWnQ7/ARuBksWLtpQUIreZoUT0ur419kvPtw1FrfI4/k2oL5gNGu6TEBuEBQhT0bFcJ2
-ZGE7V+f7WQKMCSKcOu0szQ3x/ns8Y/8lYFxHbXvc2Lppc4+lDOk19JnnaRZ3G8ea+zk7BryVPjn7
-BoarnTL6T8ao1B6m7MKyV57jc00TVqS3by6ucg==
+F1CGFoDibmJP5q3a4vaJ+jc/dY35Bt8Vf9SqDVtWOdt+wNW2LKoDr7QmZufbZmkQANnGvUzu3qwU
+/MytPo2sY10QC7CbdttKfOfoAd623jxL7zTLKqhT/s4FP4zHiYV/30Wp95dMoIKHtz7QGMCG2jzi
+RfxGNEB6lvLxTtEHEHqkJC8zmYxLD5bgzsIisOmHfvgFxTrrN7EP6iuj0DbMli7XvPnHPPp8MnO2
+PA/tlU1JlncjU3yehjStcZ3AKABQbIQOHmk56xX2UdmnKo5mVjapJAxq4+eqP+vEelXX1wY3kx0W
+ffZU3JTd1xcc/Rd0uqcLg9OkA3ZltUKbsLLYWA==
 </ds:SignatureValue>
 <ds:KeyInfo>
 <ds:KeyValue>
