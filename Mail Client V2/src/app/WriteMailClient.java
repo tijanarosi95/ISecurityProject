@@ -84,14 +84,14 @@ public class WriteMailClient extends MailClient {
 			
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
 			
-			KeyStore keyStoreA = keyStoreReader.readKeyStore("./data/UserA.jks", "12345".toCharArray());
-			KeyStore keyStoreB = keyStoreReader.readKeyStore("./data/UserB.jks", "54321".toCharArray());
+			KeyStore keyStoreA = keyStoreReader.readKeyStore("./data/usera.jks", "passa".toCharArray());
 			
+			
+			Certificate cerB = keyStoreA.getCertificate("userb");
+			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(cerB);
 			
 			DataUtil.generateXML(reciever, subject, body);
 			
-			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStoreB, "userb");
-			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(userBCer);
 			
 			/*
 			 * To instantiate a Cipher object, I must call static method getInstance

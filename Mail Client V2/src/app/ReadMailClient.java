@@ -23,7 +23,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.xml.security.utils.JavaUtils;
 import org.w3c.dom.Document;
 
 import com.google.api.services.gmail.Gmail;
@@ -108,11 +107,11 @@ public class ReadMailClient extends MailClient {
 		
 		/*
 		 * get key store*/
-		KeyStore keyStore = keyStoreReader.readKeyStore("./data/UserB.jks", "54321".toCharArray());
+		KeyStore keyStore = keyStoreReader.readKeyStore("./data/userb.jks", "passb".toCharArray());
 		
 		/*
 		 * get the private key*/
-		PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStore, "userb", "54321".toCharArray());
+		PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStore, "userb", "passb".toCharArray());
 		
 	    
         //TODO: Decrypt a message and decompress it. The private key is stored in a file.
@@ -122,14 +121,14 @@ public class ReadMailClient extends MailClient {
 		
 		byte[] decryptedTxt = rsaCipherDec.doFinal(secretKey.getEncoded());
 		
-		SecretKey secretKeyAES = new SecretKeySpec(decryptedTxt, "DESede");
+		SecretKey secretKeyDES = new SecretKeySpec(decryptedTxt, "DESede");
 	
 		
 		Cipher tripleDESdec = Cipher.getInstance("DESede/CBC/PKCS5Padding");
 		
 		byte[] iv1 = mailBody.getIV1Bytes();
 		IvParameterSpec ivParameterSpec1 = new IvParameterSpec(iv1);
-		tripleDESdec.init(Cipher.DECRYPT_MODE, secretKeyAES, ivParameterSpec1);
+		tripleDESdec.init(Cipher.DECRYPT_MODE, secretKeyDES, ivParameterSpec1);
 		
 		
 		String receivedBodyTxt = new String(tripleDESdec.doFinal(Base64.decode(encMessage)));
@@ -139,7 +138,7 @@ public class ReadMailClient extends MailClient {
 		byte[] iv2 = mailBody.getIV2Bytes();
 		IvParameterSpec ivParameterSpec2 = new IvParameterSpec(iv2);
 		//inicijalizacija za dekriptovanje
-		tripleDESdec.init(Cipher.DECRYPT_MODE, secretKeyAES, ivParameterSpec2);
+		tripleDESdec.init(Cipher.DECRYPT_MODE, secretKeyDES, ivParameterSpec2);
 		
 		//dekompresovanje i dekriptovanje subject-a
 		String decryptedSubjectTxt = new String(tripleDESdec.doFinal(Base64.decode(chosenMessage.getSubject())));
@@ -165,7 +164,6 @@ public class ReadMailClient extends MailClient {
 		
 		if(!DataUtil.verifySiganture(doc, cer)) {
 			
-			System.out.println("");
 			System.out.println(".... verification is failed");
 			System.out.println("");
 		}

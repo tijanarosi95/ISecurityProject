@@ -66,9 +66,9 @@ public class DataUtil {
 			
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
 			
-			KeyStore keyStoreA = keyStoreReader.readKeyStore("./data/UserA.jks", "12345".toCharArray());
+			KeyStore keyStoreA = keyStoreReader.readKeyStore("./data/usera.jks", "passa".toCharArray());
 			
-			PrivateKey privateKeyA = keyStoreReader.getPrivateKeyFromKeyStore(keyStoreA, "usera", "12345".toCharArray());
+			PrivateKey privateKeyA = keyStoreReader.getPrivateKeyFromKeyStore(keyStoreA, "usera", "passa".toCharArray());
 			
 			Certificate userAcer = keyStoreReader.getCertificateFromKeyStore(keyStoreA, "usera");
 			
