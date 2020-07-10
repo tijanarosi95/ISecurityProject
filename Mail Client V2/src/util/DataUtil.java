@@ -2,14 +2,19 @@ package util;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -21,6 +26,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.apache.xml.security.signature.XMLSignature;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import model.keystore.KeyStoreReader;
 
@@ -88,16 +95,64 @@ public class DataUtil {
 			sig.sign(privateKeyA);	
 			System.out.println("....... signed");
 			
-			
+			//save signature into messages.xml in data directory
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("./data/messages.xml"));
+			StreamResult result = new StreamResult(new File("./data/message.xml"));
 			transformer.transform(source, result);
 			
 			
 			
 		}catch(Exception ex) {ex.printStackTrace();}
+	}
+	
+	public static Document loadDocument() {
+		
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File("./data/message.xml"));
+
+			return document;
+		} catch (FactoryConfigurationError e) {
+			e.printStackTrace();
+			return null;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		} catch (SAXException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public static boolean verifySiganture(Document doc, X509Certificate cer) {
+		
+		try {
+			
+			NodeList nodes = doc.getElementsByTagName("ds:Signature");
+			
+			if (nodes == null || nodes.getLength() == 0) {
+				throw new Exception("Can't find signature in document.");
+			}
+			
+			DOMValidateContext ctx = new DOMValidateContext(cer.getPublicKey(), nodes.item(0));
+			XMLSignatureFactory sigF = XMLSignatureFactory.getInstance("DOM");
+			javax.xml.crypto.dsig.XMLSignature xmlSignature = sigF.unmarshalXMLSignature(ctx);
+			
+			return xmlSignature.validate(ctx);
+			
+		}catch(Exception ex) {
+			
+			ex.printStackTrace();
+			return false;
+		}
 	}
 
 }

@@ -88,18 +88,7 @@ public class WriteMailClient extends MailClient {
 			KeyStore keyStoreB = keyStoreReader.readKeyStore("./data/UserB.jks", "54321".toCharArray());
 			
 			
-			PrivateKey privateKey = keyStoreReader.getPrivateKeyFromKeyStore(keyStoreA, "usera", "12345".toCharArray());
-			
-			
 			DataUtil.generateXML(reciever, subject, body);
-			//Signature signature = Signature.getInstance("SHA256withRSA");
-			//signature.initSign(privateKey);
-			
-			//MimeMessage does not implement Serializable interface FIX THAT--->Transform message to XML
-			//byte[] messageBytes = objectToByteArray(MailHelper.createMimeMessage(reciever, ciphersubjectStr, ciphertextStr));
-			//signature.update(messageBytes);
-			
-			//byte[] digitalSign = signature.sign();
 			
 			Certificate userBCer = keyStoreReader.getCertificateFromKeyStore(keyStoreB, "userb");
 			PublicKey publicKeyUserB = keyStoreReader.getPublicKeyFromKeyStore(userBCer);
@@ -137,29 +126,5 @@ public class WriteMailClient extends MailClient {
         }catch (Exception e) {
         	e.printStackTrace();
 		}
-	}
-	
-	private static byte[] objectToByteArray(MimeMessage message) {
-		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutputStream out = null;
-		try {
-		  out = new ObjectOutputStream(bos);   
-		  out.writeObject(message);
-		  out.flush();
-		  byte[] messageBytes = bos.toByteArray();
-
-		 return messageBytes;
-		 
-		}catch(Exception ex) {ex.printStackTrace();
-		
-		} finally {
-		  try {
-		    bos.close();
-		  } catch (IOException ex) {
-			  ex.printStackTrace();
-		  }
-		}
-		return null;	
 	}
 }

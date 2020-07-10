@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><root><message><recipient>rosictijana95@gmail.com</recipient><subject>Testic</subject><body>Tijaa anddd</body></message><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><root><message><recipient>rosictijana95@gmail.com</recipient><subject>test</subject><body>tijaa</body></message><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 <ds:SignedInfo>
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
@@ -8,15 +8,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#WithComments"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-<ds:DigestValue>TJyX9eoRsQ1hE6YhJ0EFOoQE0mw=</ds:DigestValue>
+<ds:DigestValue>bHeBkOUS/Cypx9n2EtCdBgqqsJc=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
 <ds:SignatureValue>
-JPLPOwbP9yld6mYe6g1Z29WXZ54iE6l1/4GVJCNK4h9H9uwvngp3x9APkKwzC+qeWmhlosPmDetX
-VOOuLGdpIlKvrFBTTVHa5mBIX0HiDl79p/Dk+16uGDYJkbNsu884A9v/Nz11r1I84zLwtWS178ko
-CsUQ7YlAuKlegMIQhpBWGqxFlbqAqJNK7yjjEcPG4ZTX7LtzA9Ms0xKL1+pUWyJHjg9Lb6B3QOx6
-p0EGt0j/9XRMdJZjwxHstjUqQY+4sIhZQySx3cpDv82eu8FoJEKdiQnont1t49hYwPoTX4M8d0Rh
-BubGP7ZcG9nnmfkCrJ8LMiSixegxZQOgElShIg==
+OFRceQtqZCQfrylrLrlHa/BcKgXAjlxHt1PRLqcK8x0mzg6Nsxl/9NryLgXaDeULOmUi0olzzHTW
+u/ZTcUTUFGms4zm4GS/WD9XkBfNoy+6FhrAGcGxI85RVz0r7Jl4j34Ym6ARv0RN3W5e+Gg+V6gx1
+WYwJfjb5V99enyUOqhxeeS9HssnvXcqg0C38YK6JlBUQmUW9i+9NfdZvm2L/08QNc8ukWVR1qNcx
+v4jxw7Fw/9LXkemDY/bnZd1yyxz2OLAIknBfobm+oYVTjVyS9hh+VvyEyoZt+7aqOL/oLvRuCIZ3
+Ii8g4lBjedyjSCr8b/praRI8M+wgIKOlnqDHcw==
 </ds:SignatureValue>
 <ds:KeyInfo>
 <ds:KeyValue>
